@@ -160,6 +160,11 @@ $ LD_PRELOAD=/path/to/libnss_wrapper.so cargo test --features nsswrapper nsswrap
 $ LD_PRELOAD=/path/to/libnss_wrapper.so cargo test --all-features # To run the whole test suite
 ```
 
+```
+You can use this command to find hte nss_swrapper.so path
+ldconfig -p | grep nss_wrapper
+```
+
 ## Configuration
 
 Edit `/etc/greetd/config.toml` and set the `command` setting to use `tuigreet`:
@@ -233,7 +238,7 @@ Optionally, a user can be selected from a menu instead of typing out their name,
 
 ### Theming
 
-A theme specification can be given through the `--theme` argument to control some of the colors used to draw the UI. This specification string must have the following format: `component1=color;component2=color[;...]` where the component is one of the value listed in the table below, and the color is a valid ANSI color name as listed [here](https://github.com/ratatui-org/ratatui/blob/main/src/style/color.rs#L15).
+A theme specification can be given through the `--theme` argument to control some of the colors used to draw the UI. This specification string must have the following format: `component1=color;component2=color[;...]` where the component is one of the value listed in the table below, and the color is a valid ANSI color name as listed [here](https://github.com/ratatui/ratatui/blob/c7c34980254e4ffe6416cb8e20ba2c49300948a3/ratatui-core/src/style/color.rs#L15).
 
 Mind that the specification string include semicolons, which are command delimiters in most shells, hence, you should enclose it in single-quotes so it is considered a single argument instead.
 
