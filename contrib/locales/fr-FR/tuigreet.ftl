@@ -7,7 +7,8 @@ title_users = Choisissez un utilisateur
 action_reset = Réinitialiser
 action_command = Changer la commande
 action_session = Choisir la session
-action_power = Alimentation
+action_shutdown = Éteindre
+action_reboot = Redémarrer
 
 date = %a %d %h %Y - %H:%M
 
@@ -17,9 +18,6 @@ wait = Veuillez patienter...
 failed = Erreur d'authentification, veuillez réessayer.
 
 command = Nouvelle commande :
-
-shutdown = Éteindre
-reboot = Redémarrer
 
 command_missing = Aucune commande configurée
 command_exited = La commande a retourné

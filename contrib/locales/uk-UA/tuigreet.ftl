@@ -7,7 +7,8 @@ title_users = Виберіть користувача
 action_reset = Скинути
 action_command = Змінити команду
 action_session = Вибрати сесію
-action_power = Живлення
+action_shutdown = Завершити роботу
+action_reboot = Перезавантажити
 
 date = %a, %d %h %Y - %H:%M
 
@@ -17,9 +18,6 @@ wait = Будь ласка, зачекайте...
 failed = Помилка входу, будь ласка, спробуйте знову.
 
 new_command = Нова команда:
-
-shutdown = Завершити роботу
-reboot = Перезавантажити
 
 command_exited = Команда завершила роботу з кодом
 command_failed = Під час виконання команди виникла помилка

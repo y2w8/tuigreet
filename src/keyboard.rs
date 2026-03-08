@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use crate::{
   info::{delete_last_command, delete_last_session, get_last_user_command, get_last_user_session, write_last_command, write_last_session_path},
   ipc::Ipc,
-  power::power,
+  power::{PowerOption, power},
   ui::{
     common::masked::MaskedString,
     sessions::{Session, SessionSource},
@@ -66,7 +66,7 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
         greeter.cursor_offset = 0;
       }
 
-      Mode::Users | Mode::Sessions | Mode::Power => {
+      Mode::Users | Mode::Sessions => {
         greeter.mode = greeter.previous_mode;
       }
 
@@ -85,7 +85,7 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
     // screen.
     KeyEvent { code: KeyCode::F(i), .. } if i == greeter.kb_command => {
       greeter.previous_mode = match greeter.mode {
-        Mode::Users | Mode::Command | Mode::Sessions | Mode::Power => greeter.previous_mode,
+        Mode::Users | Mode::Command | Mode::Sessions => greeter.previous_mode,
         _ => greeter.mode,
       };
 
@@ -101,23 +101,21 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
     // previous screen.
     KeyEvent { code: KeyCode::F(i), .. } if i == greeter.kb_sessions => {
       greeter.previous_mode = match greeter.mode {
-        Mode::Users | Mode::Command | Mode::Sessions | Mode::Power => greeter.previous_mode,
+        Mode::Users | Mode::Command | Mode::Sessions => greeter.previous_mode,
         _ => greeter.mode,
       };
 
       greeter.mode = Mode::Sessions;
     }
 
-    // F12 will display the user selection menu. If we are already in one of the
-    // popup screens, we set the previous screen as being the current previous
-    // screen.
-    KeyEvent { code: KeyCode::F(i), .. } if i == greeter.kb_power => {
-      greeter.previous_mode = match greeter.mode {
-        Mode::Users | Mode::Command | Mode::Sessions | Mode::Power => greeter.previous_mode,
-        _ => greeter.mode,
-      };
+    // F4 (or specified F key) will shutdown
+    KeyEvent { code: KeyCode::F(i), .. } if i == greeter.kb_shutdown => {
+      power(&mut greeter, PowerOption::Shutdown).await;
+    }
 
-      greeter.mode = Mode::Power;
+    // F5 (or specified F key) will reboot
+    KeyEvent { code: KeyCode::F(i), .. } if i == greeter.kb_reboot => {
+      power(&mut greeter, PowerOption::Reboot).await;
     }
 
     // Handle moving up in menus.
@@ -133,12 +131,6 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
           greeter.sessions.selected -= 1;
         }
       }
-
-      if let Mode::Power = greeter.mode {
-        if greeter.powers.selected > 0 {
-          greeter.powers.selected -= 1;
-        }
-      }
     }
 
     // Handle moving down in menus.
@@ -152,12 +144,6 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
       if let Mode::Sessions = greeter.mode {
         if greeter.sessions.selected < greeter.sessions.options.len() - 1 {
           greeter.sessions.selected += 1;
-        }
-      }
-
-      if let Mode::Power = greeter.mode {
-        if greeter.powers.selected < greeter.powers.options.len() - 1 {
-          greeter.powers.selected += 1;
         }
       }
     }
@@ -197,7 +183,7 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
 
       Mode::Username if greeter.user_menu => {
         greeter.previous_mode = match greeter.mode {
-          Mode::Users | Mode::Command | Mode::Sessions | Mode::Power => greeter.previous_mode,
+          Mode::Users | Mode::Command | Mode::Sessions => greeter.previous_mode,
           _ => greeter.mode,
         };
 
@@ -257,16 +243,6 @@ pub async fn handle(greeter: Arc<RwLock<Greeter>>, input: KeyEvent, ipc: Ipc) ->
           }
 
           greeter.session_source = SessionSource::Session(greeter.sessions.selected);
-        }
-
-        greeter.mode = greeter.previous_mode;
-      }
-
-      Mode::Power => {
-        let power_command = greeter.powers.options.get(greeter.powers.selected).cloned();
-
-        if let Some(command) = power_command {
-          power(&mut greeter, command.action).await;
         }
 
         greeter.mode = greeter.previous_mode;
@@ -470,7 +446,7 @@ mod test {
       assert_eq!(status.cursor_offset, 0);
     }
 
-    for mode in [Mode::Users, Mode::Sessions, Mode::Power] {
+    for mode in [Mode::Users, Mode::Sessions] {
       {
         let mut greeter = greeter.write().await;
         greeter.previous_mode = Mode::Username;
@@ -534,7 +510,7 @@ mod test {
       assert_eq!(status.buffer, "thecommand".to_string());
     }
 
-    for mode in [Mode::Users, Mode::Sessions, Mode::Power] {
+    for mode in [Mode::Users, Mode::Sessions] {
       {
         let mut greeter = greeter.write().await;
         greeter.previous_mode = Mode::Username;
@@ -557,7 +533,7 @@ mod test {
   async fn f_menu() {
     let greeter = Arc::new(RwLock::new(Greeter::default()));
 
-    for (key, mode) in [(KeyCode::F(3), Mode::Sessions), (KeyCode::F(12), Mode::Power)] {
+    for (key, mode) in [(KeyCode::F(3), Mode::Sessions)] {
       {
         let mut greeter = greeter.write().await;
         greeter.mode = Mode::Username;
@@ -574,7 +550,7 @@ mod test {
         assert_eq!(status.buffer, "apognu".to_string());
       }
 
-      for mode in [Mode::Users, Mode::Sessions, Mode::Power] {
+      for mode in [Mode::Users, Mode::Sessions] {
         {
           let mut greeter = greeter.write().await;
           greeter.previous_mode = Mode::Username;
@@ -598,12 +574,13 @@ mod test {
   async fn f_menu_rebinded() {
     let greeter = Arc::new(RwLock::new(Greeter::default()));
 
-    for (key, mode) in [(KeyCode::F(1), Mode::Sessions), (KeyCode::F(11), Mode::Power)] {
+    for (key, mode) in [(KeyCode::F(1), Mode::Sessions)] {
       {
         let mut greeter = greeter.write().await;
         greeter.kb_command = 3;
         greeter.kb_sessions = 1;
-        greeter.kb_power = 11;
+        greeter.kb_shutdown = 11;
+        greeter.kb_reboot = 6;
         greeter.mode = Mode::Username;
         greeter.buffer = "apognu".to_string();
       }
@@ -618,7 +595,7 @@ mod test {
         assert_eq!(status.buffer, "apognu".to_string());
       }
 
-      for mode in [Mode::Users, Mode::Sessions, Mode::Power] {
+      for mode in [Mode::Users, Mode::Sessions] {
         {
           let mut greeter = greeter.write().await;
           greeter.previous_mode = Mode::Username;

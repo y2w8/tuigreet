@@ -1,4 +1,5 @@
 use std::{
+  collections::HashSet,
   convert::TryInto,
   env,
   error::Error,
@@ -25,10 +26,8 @@ use zeroize::Zeroize;
 use crate::{
   event::Event,
   info::{get_issue, get_last_command, get_last_session_path, get_last_user_command, get_last_user_name, get_last_user_session, get_last_user_username, get_min_max_uids, get_sessions, get_users},
-  power::PowerOption,
   ui::{
     common::{masked::MaskedString, menu::Menu, style::Theme},
-    power::Power,
     sessions::{Session, SessionSource, SessionType},
     users::User,
   },
@@ -67,7 +66,6 @@ pub enum Mode {
   Users,
   Command,
   Sessions,
-  Power,
   Processing,
 }
 
@@ -168,17 +166,23 @@ pub struct Greeter {
   // Transaction message to show to the user.
   pub message: Option<String>,
 
-  // Menu for power options.
-  pub powers: Menu<Power>,
   // Whether to prefix the power commands with `setsid`.
   pub power_setsid: bool,
+
+  // shutdown command (if not default)
+  pub power_shutdown_cmd: Option<String>,
+
+  // reboot command (if not default)
+  pub power_reboot_cmd: Option<String>,
 
   #[default(2)]
   pub kb_command: u8,
   #[default(3)]
   pub kb_sessions: u8,
-  #[default(12)]
-  pub kb_power: u8,
+  #[default(4)]
+  pub kb_shutdown: u8,
+  #[default(5)]
+  pub kb_reboot: u8,
 
   // The software is waiting for a response from `greetd`.
   pub working: bool,
@@ -200,12 +204,6 @@ impl Greeter {
 
     greeter.events = Some(events);
     greeter.set_locale();
-
-    greeter.powers = Menu {
-      title: fl!("title_power"),
-      options: Default::default(),
-      selected: 0,
-    };
 
     #[cfg(not(test))]
     {
@@ -466,7 +464,8 @@ impl Greeter {
 
     opts.optopt("", "kb-command", "F-key to use to open the command menu", "[1-12]");
     opts.optopt("", "kb-sessions", "F-key to use to open the sessions menu", "[1-12]");
-    opts.optopt("", "kb-power", "F-key to use to open the power menu", "[1-12]");
+    opts.optopt("", "kb-shutdown", "F-key to shutdown", "[1-12]");
+    opts.optopt("", "kb-reboot", "F-key to reboot", "[1-12]");
 
     opts
   }
@@ -604,26 +603,27 @@ impl Greeter {
       self.greeting = get_issue();
     }
 
-    self.powers.options.push(Power {
-      action: PowerOption::Shutdown,
-      label: fl!("shutdown"),
-      command: self.config().opt_str("power-shutdown"),
-    });
-
-    self.powers.options.push(Power {
-      action: PowerOption::Reboot,
-      label: fl!("reboot"),
-      command: self.config().opt_str("power-reboot"),
-    });
-
     self.power_setsid = !self.config().opt_present("power-no-setsid");
+
+    self.power_shutdown_cmd = self.config().opt_str("power-shutdown");
+    self.power_reboot_cmd = self.config().opt_str("power-reboot");
 
     self.kb_command = self.config().opt_str("kb-command").map(|i| i.parse::<u8>().unwrap_or_default()).unwrap_or(2);
     self.kb_sessions = self.config().opt_str("kb-sessions").map(|i| i.parse::<u8>().unwrap_or_default()).unwrap_or(3);
-    self.kb_power = self.config().opt_str("kb-power").map(|i| i.parse::<u8>().unwrap_or_default()).unwrap_or(12);
+    self.kb_shutdown = self.config().opt_str("kb-shutdown").map(|i| i.parse::<u8>().unwrap_or_default()).unwrap_or(4);
+    self.kb_reboot = self.config().opt_str("kb-reboot").map(|i| i.parse::<u8>().unwrap_or_default()).unwrap_or(5);
+    
+    let mut seen_keybindings = HashSet::new();
 
-    if self.kb_command == self.kb_sessions || self.kb_sessions == self.kb_power || self.kb_power == self.kb_command {
-      return Err("keybindings must all be distinct".into());
+    for value in [
+        self.kb_command,
+        self.kb_sessions,
+        self.kb_shutdown,
+        self.kb_reboot,
+    ] {
+        if !seen_keybindings.insert(value) {
+            return Err(format!("duplicate keybinding value: {}", value).into());
+        }
     }
 
     Ok(())

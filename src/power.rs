@@ -2,7 +2,7 @@ use std::{process::Stdio, sync::Arc};
 
 use tokio::{process::Command, sync::RwLock};
 
-use crate::{event::Event, ui::power::Power, Greeter, Mode};
+use crate::{event::Event, Greeter, Mode};
 
 #[derive(SmartDefault, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PowerOption {
@@ -12,51 +12,42 @@ pub enum PowerOption {
 }
 
 pub async fn power(greeter: &mut Greeter, option: PowerOption) {
-  let command = match greeter.powers.options.iter().find(|opt| opt.action == option) {
-    None => None,
-
-    Some(Power { command: Some(args), .. }) => {
-      let command = match greeter.power_setsid {
+  let command = match option {
+    PowerOption::Shutdown => greeter.power_shutdown_cmd.as_deref(),
+    PowerOption::Reboot => greeter.power_reboot_cmd.as_deref(),
+  };
+  let command = match command {
+    Some(args) if !args.is_empty() => {
+      match greeter.power_setsid {
         true => {
-          let mut command = Command::new("setsid");
-          command.args(args.split(' '));
-          command
+          let mut cmd = Command::new("setsid");
+          cmd.args(args.split(' '));
+          cmd
         }
-
         false => {
           let mut args = args.split(' ');
-
-          let mut command = Command::new(args.next().unwrap_or_default());
-          command.args(args);
-          command
+          let mut cmd = Command::new(args.next().unwrap_or_default());
+          cmd.args(args);
+          cmd
         }
-      };
-
-      Some(command)
+      }
     }
-
-    Some(_) => {
-      let mut command = Command::new("shutdown");
-
+    _ => {
+      let mut cmd = Command::new("shutdown");
       match option {
-        PowerOption::Shutdown => command.arg("-h"),
-        PowerOption::Reboot => command.arg("-r"),
+        PowerOption::Shutdown => cmd.arg("-h"),
+        PowerOption::Reboot => cmd.arg("-r"),
       };
-
-      command.arg("now");
-
-      Some(command)
+      cmd.arg("now");
+      cmd
     }
   };
-
-  if let Some(mut command) = command {
-    command.stdin(Stdio::null());
-    command.stdout(Stdio::null());
-    command.stderr(Stdio::null());
-
-    if let Some(ref sender) = greeter.events {
-      let _ = sender.send(Event::PowerCommand(command)).await;
-    }
+  let mut command = command;
+  command.stdin(Stdio::null());
+  command.stdout(Stdio::null());
+  command.stderr(Stdio::null());
+  if let Some(ref sender) = greeter.events {
+    let _ = sender.send(Event::PowerCommand(command)).await;
   }
 }
 

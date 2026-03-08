@@ -6,7 +6,8 @@ title_session = Canvi de sessió
 action_reset = Reinicialitza
 action_command = Canvia l'ordre
 action_session = Tria una sessió
-action_power = Engegada
+action_shutdown = Atura
+action_reboot = Reinicia
 
 date = %a %d %h %Y - %H:%M
 
@@ -15,9 +16,6 @@ wait = Espereu...
 failed = Error d'autenticació, torneu-ho a provar.
 
 new_command = Ordre nova:
-
-shutdown = Atura
-reboot = Reinicia
 
 status_command = CMD
 status_caps = BLOQ MAJ

@@ -2,8 +2,7 @@ use crossterm::event::{KeyCode, KeyModifiers};
 use libgreetd_stub::SessionOptions;
 
 use crate::{
-  power::PowerOption,
-  ui::{common::menu::Menu, power::Power, sessions::Session, users::User},
+  ui::{common::menu::Menu, sessions::Session, users::User},
 };
 
 use super::common::IntegrationRunner;
@@ -26,7 +25,8 @@ async fn menus_labels_default() {
 
       assert!(runner.output().await.contains("F2 Change command"));
       assert!(runner.output().await.contains("F3 Choose session"));
-      assert!(runner.output().await.contains("F12 Power"));
+      assert!(runner.output().await.contains("F4 Shutdown"));
+      assert!(runner.output().await.contains("F5 Reboot"));
     }
   });
 
@@ -46,7 +46,8 @@ async fn menus_labels_with_custom_bindings() {
     Some(|greeter| {
       greeter.kb_command = 11;
       greeter.kb_sessions = 1;
-      greeter.kb_power = 6;
+      greeter.kb_shutdown = 6;
+      greeter.kb_reboot = 8;
     }),
   )
   .await;
@@ -59,7 +60,8 @@ async fn menus_labels_with_custom_bindings() {
 
       assert!(runner.output().await.contains("F11 Change command"));
       assert!(runner.output().await.contains("F1 Choose session"));
-      assert!(runner.output().await.contains("F6 Power"));
+      assert!(runner.output().await.contains("F6 Shutdown"));
+      assert!(runner.output().await.contains("F8 Reboot"));
     }
   });
 
@@ -160,54 +162,6 @@ async fn session_menu() {
       runner.wait_for_render().await;
 
       assert!(runner.output().await.contains("SESS My Session"));
-    }
-  });
-
-  runner.join_until_end(events).await;
-}
-
-#[tokio::test]
-async fn power_menu() {
-  let opts = SessionOptions {
-    username: "apognu".to_string(),
-    password: "password".to_string(),
-    mfa: false,
-  };
-
-  let mut runner = IntegrationRunner::new(
-    opts,
-    Some(|greeter| {
-      greeter.powers = Menu::<Power> {
-        title: "What to do?".to_string(),
-        options: vec![
-          Power {
-            action: PowerOption::Shutdown,
-            label: "Turn it off".to_string(),
-            ..Default::default()
-          },
-          Power {
-            action: PowerOption::Reboot,
-            label: "And back on again".to_string(),
-            ..Default::default()
-          },
-        ],
-        selected: 0,
-      };
-    }),
-  )
-  .await;
-
-  let events = tokio::task::spawn({
-    let mut runner = runner.clone();
-
-    async move {
-      runner.wait_until_buffer_contains("Username:").await;
-      runner.send_key(KeyCode::F(12)).await;
-      runner.wait_for_render().await;
-
-      assert!(runner.output().await.contains("What to do?"));
-      assert!(runner.output().await.contains("Turn it off"));
-      assert!(runner.output().await.contains("And back on again"));
     }
   });
 

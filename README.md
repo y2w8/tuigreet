@@ -65,8 +65,10 @@ Options:
                         F-key to use to open the command menu
         --kb-sessions [1-12]
                         F-key to use to open the sessions menu
-        --kb-power [1-12]
-                        F-key to use to open the power menu
+        --kb-shutdown [1-12]
+                        F-key to use to shutdown
+        --kb-reboot [1-12]
+                        F-key to use to reboot
 ```
 
 ## Usage
@@ -77,7 +79,7 @@ The initial prompt container will be 80 column wide. You may change this with `-
 
 You can instruct `tuigreet` to remember the last username that successfully opened a session with the `--remember` option (that way, the username field will be pre-filled). Similarly, the command and session configuration can be retained between runs with the `--remember-session` option (when using this, the `--cmd` value is overridden by manual selections). You can also remember the selected session per user with the `--remember-user-session` flag. In this case, the selected session will only be saved on successful authentication. Check the [cache instructions](#cache-instructions) if `/var/cache/tuigreet` doesn't exist after installing tuigreet.
 
-You may change the command that will be executed after opening a session by hitting `F2` and amending the command. Alternatively, you can list the system-declared sessions (or custom ones) by hitting `F3`. Power options are available through `F12`.
+You may change the command that will be executed after opening a session by hitting `F2` and amending the command. Alternatively, you can list the system-declared sessions (or custom ones) by hitting `F3`. Shutdown with `F4` and reboot with `F5`.
 
 ## Install
 

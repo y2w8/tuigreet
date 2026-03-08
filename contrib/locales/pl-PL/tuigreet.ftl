@@ -8,7 +8,8 @@ title_users = Wybór użytkownika
 action_reset = Reset
 action_command = Zmiana polecenia
 action_session = Wybór sesji
-action_power = Zasilanie
+action_shutdown = Wyłącz
+action_reboot = Uruchom ponownie
 
 date = %a, %d %h %Y - %H:%M
 
@@ -18,9 +19,6 @@ wait = Proszę czekać...
 failed = Uwierzytelnianie nie powiodło się. Spróbuj ponownie.
 
 new_command = Nowe polecenie:
-
-shutdown = Wyłącz
-reboot = Uruchom ponownie
 
 command_exited = Polecenie zakończone z kodem
 command_failed = Polecenie zakończone niepowodzeniem

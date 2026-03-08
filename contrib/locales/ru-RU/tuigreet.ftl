@@ -7,7 +7,8 @@ title_users = Выбрать пользователя
 action_reset = Перезагрузка
 action_command = Изменить команду
 action_session = Выбрать сеанс
-action_power = Питание
+action_shutdown = Выключение
+action_reboot = Перезагрузка
 
 date = %a, %d %h %Y - %H:%M
 
@@ -17,9 +18,6 @@ wait = Пожалуйста подождите...
 failed = Ошибка аутентификации, попробуйте снова.
 
 new_command = Новая команда:
-
-shutdown = Выключение
-reboot = Перезагрузка
 
 command_exited = Команда завершилась с
 command_failed = Команда не выполнена

@@ -1,7 +1,6 @@
 mod command;
 pub mod common;
 mod i18n;
-pub mod power;
 mod processing;
 mod prompt;
 pub mod sessions;
@@ -41,8 +40,9 @@ pub(super) type Frame<'a> = CrosstermFrame<'a>;
 
 enum Button {
   Command,
+  Reboot,
   Session,
-  Power,
+  Shutdown,
   Other,
 }
 
@@ -110,8 +110,10 @@ where
       status_label(theme, format!("F{}", greeter.kb_sessions)),
       status_value(&greeter, theme, Button::Session, fl!("action_session")),
       Span::from(" "),
-      status_label(theme, format!("F{}", greeter.kb_power)),
-      status_value(&greeter, theme, Button::Power, fl!("action_power")),
+      status_label(theme, format!("F{}", greeter.kb_shutdown)),
+      status_value(&greeter, theme, Button::Shutdown, fl!("action_shutdown")),
+      status_label(theme, format!("F{}", greeter.kb_reboot)),
+      status_value(&greeter, theme, Button::Reboot, fl!("action_reboot")),
       Span::from(" "),
       status_label(theme, session_source_label),
       status_value(&greeter, theme, Button::Other, session_source),
@@ -130,7 +132,6 @@ where
     let cursor = match greeter.mode {
       Mode::Command => self::command::draw(&mut greeter, f).ok(),
       Mode::Sessions => greeter.sessions.draw(&greeter, f).ok(),
-      Mode::Power => greeter.powers.draw(&greeter, f).ok(),
       Mode::Users => greeter.users.draw(&greeter, f).ok(),
       Mode::Processing => self::processing::draw(&mut greeter, f).ok(),
       _ => self::prompt::draw(&mut greeter, f).ok(),
@@ -171,7 +172,6 @@ where
   let relevant_mode = match button {
     Button::Command => Mode::Command,
     Button::Session => Mode::Sessions,
-    Button::Power => Mode::Power,
 
     _ => {
       return Span::from(buttonize(&text.into())).style(theme.of(&[Themed::Action]));

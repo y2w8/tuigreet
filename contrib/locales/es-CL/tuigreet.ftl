@@ -7,7 +7,8 @@ title_users = Seleccionar usuario
 action_reset = Reiniciar
 action_command = Cambiar comando
 action_session = Escoger sesión
-action_power = Energía
+action_shutdown = Apagar
+action_reboot = Reiniciar
 
 date = %a, %d %h %Y - %H:%M
 
@@ -17,9 +18,6 @@ wait = Por favor espera...
 failed = Autenticación fallida, por favor vuelve a intentarlo.
 
 new_command = Nuevo comando:
-
-shutdown = Apagar
-reboot = Reiniciar
 
 command_exited = El comando terminó con
 command_failed = El comando falló

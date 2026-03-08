@@ -7,7 +7,8 @@ title_users = Select a user
 action_reset = Reset
 action_command = Change command
 action_session = Choose session
-action_power = Power
+action_shutdown = Shutdown
+action_reboot = Reboot
 
 date = %a, %d %h %Y - %H:%M
 
@@ -17,9 +18,6 @@ wait = Please wait...
 failed = Authentication failed, please try again.
 
 new_command = New command:
-
-shutdown = Shut down
-reboot = Reboot
 
 command_missing = No command configured
 command_exited = Command exited with

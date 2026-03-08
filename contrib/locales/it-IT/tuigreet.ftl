@@ -6,7 +6,8 @@ title_session = Cambia sessione
 action_reset = Reset
 action_command = Cambia comando
 action_session = Scegli sessione
-action_power = Alimentazione
+action_shutdown = Spegni
+action_reboot = Riavvia
 
 date = %a, %d %h %Y - %H:%M
 
@@ -15,9 +16,6 @@ wait = Attendere...
 failed = Autenticazione fallita, riprova.
 
 new_command = Nuovo comando:
-
-shutdown = Spegni
-reboot = Riavvia
 
 status_command = CMD
 status_caps = BLC MAIUSC
