@@ -1,6 +1,5 @@
 title_authenticate = Uwierzytelnianie dla urządzenia {$hostname}
 title_command = Zmiana polecenia dla sesji
-title_power = Opcje zasilania
 title_session = Zmiana sesji
 title_users = Wybór użytkownika
 

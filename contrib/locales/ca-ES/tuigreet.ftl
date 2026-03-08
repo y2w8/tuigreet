@@ -1,6 +1,5 @@
 title_authenticate = Autenticació a {$hostname}
 title_command = Canvi d'ordre de sessió
-title_power = Opcions d'engegada
 title_session = Canvi de sessió
 
 action_reset = Reinicialitza

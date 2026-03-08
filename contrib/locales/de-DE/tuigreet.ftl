@@ -1,6 +1,5 @@
 title_authenticate = Bei {$hostname} authentifizieren
 title_command = Sitzungsbefehl ändern
-title_power = Energieeinstellungen
 title_session = Sitzung ändern
 
 action_reset = Zurücksetzen

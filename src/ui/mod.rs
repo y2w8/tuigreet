@@ -112,6 +112,7 @@ where
       Span::from(" "),
       status_label(theme, format!("F{}", greeter.kb_shutdown)),
       status_value(&greeter, theme, Button::Shutdown, fl!("action_shutdown")),
+      Span::from(" "),
       status_label(theme, format!("F{}", greeter.kb_reboot)),
       status_value(&greeter, theme, Button::Reboot, fl!("action_reboot")),
       Span::from(" "),

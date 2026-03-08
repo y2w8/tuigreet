@@ -1,6 +1,5 @@
 title_authenticate = Authenticate into {$hostname}
 title_command = Change session command
-title_power = Power options
 title_session = Change session
 title_users = Select a user
 

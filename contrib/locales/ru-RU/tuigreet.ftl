@@ -1,6 +1,5 @@
 title_authenticate = Авторизация в {$hostname}
 title_command = Изменить команду сеанса
-title_power = Опции питания
 title_session = Изменить сеанс
 title_users = Выбрать пользователя
 

@@ -1,6 +1,5 @@
 title_authenticate = Se connecter à {$hostname}
 title_command = Changer la commande de session
-title_power = Options d'alimentation
 title_session = Changer la session
 title_users = Choisissez un utilisateur
 

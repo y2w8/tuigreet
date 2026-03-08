@@ -1,6 +1,5 @@
 title_authenticate = Вхід до {$hostname}
 title_command = Змінити команду для сесії
-title_power = Живлення
 title_session = Виберість сесію
 title_users = Виберіть користувача
 
