@@ -655,6 +655,9 @@ fn print_version() {
   println!("Copyright (C) 2020 Antoine POPINEAU <https://github.com/apognu/tuigreet>.");
   println!("Licensed under GPLv3+ (GNU GPL version 3 or later).");
   println!();
+  println!("Copyright (C) 2026 Soupy Boy <https://github.com/soupy-boy/tuigreet>.");
+  println!("Modified version - all original authors retain credit.");
+  println!();
   println!("This is free software, you are welcome to redistribute it under some conditions.");
   println!("There is NO WARRANTY, to the extent provided by law.");
 }

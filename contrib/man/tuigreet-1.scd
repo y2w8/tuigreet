@@ -124,21 +124,22 @@ tuigreet - A graphical console greeter for greetd
 	Do not prefix power commands with *setsid*, which is used to detach it from
 	current TTY.
 
-*--kb-[command|sessions|power] [1-12]*
-	change the default F-key keybindings to access the command, sessions and power
-	menus.
+*--kb-[command|sessions|shutdown|reboot] [1-12]*
+	change the default F-key keybindings to access the command, sessions and 
+	trigger a shutdown or reboot
 
 # AUTHORS
 
-Maintained by Antoine POPINEAU <antoine@popineau.eu>.
+Originally created by Antoine POPINEAU <antoine@popineau.eu>.
+Forked and maintained by Soupy Boy <50962850+soupy-boy@users.noreply.github.com>.
 
 Contributed to by great people at
-https://github.com/apognu/tuigreet/graphs/contributors.
+https://github.com/soupy-boy/tuigreet/graphs/contributors.
 
 # DEVELOPMENT
 
 Issue reporting and development discussion should happen at
-https://github.com/apognu/tuigreet.
+https://github.com/soupy-boy/tuigreet.
 
 # SEE ALSO
 
