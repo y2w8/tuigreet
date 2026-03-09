@@ -758,6 +758,8 @@ mod test {
       (&["--min-uid", "10000", "--max-uid", "5000"], false, None),
       (&["--issue", "--greeting", "Hello, world!"], false, None),
       (&["--kb-command", "F2", "--kb-sessions", "F2"], false, None),
+      (&["--kb-shutdown", "4", "--kb-reboot", "4"], false, None), // duplicate shutdown/reboot
+      (&["--kb-reboot", "4"], false, None), // set to shutdown default, should conflict
       (&["--time-format", "%i %"], false, None),
       (&["--cmd", "cmd", "--env"], false, None),
       (&["--cmd", "cmd", "--env", "A"], false, None),

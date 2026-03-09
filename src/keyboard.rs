@@ -616,6 +616,60 @@ mod test {
   }
 
   #[tokio::test]
+  async fn f_shutdown() {
+    let greeter = Arc::new(RwLock::new(Greeter::default()));
+
+    {
+      let mut greeter = greeter.write().await;
+      greeter.mode = Mode::Username;
+    }
+
+    let result = handle(greeter.clone(), KeyEvent::new(KeyCode::F(4), KeyModifiers::empty()), Ipc::new()).await;
+    assert!(matches!(result, Ok(_)));
+  }
+
+  #[tokio::test]
+  async fn f_reboot() {
+    let greeter = Arc::new(RwLock::new(Greeter::default()));
+
+    {
+      let mut greeter = greeter.write().await;
+      greeter.mode = Mode::Username;
+    }
+
+    let result = handle(greeter.clone(), KeyEvent::new(KeyCode::F(5), KeyModifiers::empty()), Ipc::new()).await;
+    assert!(matches!(result, Ok(_)));
+  }
+
+    #[tokio::test]
+  async fn f_shutdown_rebinded() {
+    let greeter = Arc::new(RwLock::new(Greeter::default()));
+
+    {
+      let mut greeter = greeter.write().await;
+      greeter.kb_shutdown = 8;   // F8 instead of default F4
+      greeter.mode = Mode::Username;
+    }
+
+    let result = handle(greeter.clone(), KeyEvent::new(KeyCode::F(8), KeyModifiers::empty()), Ipc::new()).await;
+    assert!(matches!(result, Ok(_)));
+  }
+
+  #[tokio::test]
+  async fn f_reboot_rebinded() {
+    let greeter = Arc::new(RwLock::new(Greeter::default()));
+
+    {
+      let mut greeter = greeter.write().await;
+      greeter.kb_shutdown = 9;   // F9 instead of default F5
+      greeter.mode = Mode::Username;
+    }
+
+    let result = handle(greeter.clone(), KeyEvent::new(KeyCode::F(9), KeyModifiers::empty()), Ipc::new()).await;
+    assert!(matches!(result, Ok(_)));
+  }
+
+  #[tokio::test]
   async fn ctrl_a_e() {
     let greeter = Arc::new(RwLock::new(Greeter::default()));
 
