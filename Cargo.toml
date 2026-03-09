@@ -1,7 +1,10 @@
 [package]
 name = "tuigreet"
-version = "0.9.1"
-authors = ["Antoine POPINEAU <antoine@popineau.eu>"]
+version = "1.0.0"
+authors = [
+  "Antoine POPINEAU <antoine@popineau.eu>",
+  "Soupy Boy <50962850+soupy-boy@users.noreply.github.com>",
+  ]
 edition = "2018"
 build = "build.rs"
 
