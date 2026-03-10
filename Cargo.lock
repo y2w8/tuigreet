@@ -1715,7 +1715,7 @@ checksum = "343e926fc669bc8cde4fa3129ab681c63671bae288b1f1081ceee6d9d37904fc"
 
 [[package]]
 name = "tuigreet"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "ansi-to-tui",
  "chrono",
