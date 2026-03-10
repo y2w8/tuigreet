@@ -1,5 +1,9 @@
 name: Release build
 
+permissions:
+  contents: write
+  actions: write
+
 on:
   push:
     tags:
@@ -54,7 +58,12 @@ jobs:
     steps:
       - name: Get the version
         id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "VERSION=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -62,15 +71,11 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cargo-cache-${{ matrix.arch.target }}
-      - name: Install cross-compilation dependencies
-        if: matrix.arch.cross == true
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-${{ matrix.arch.name }}-linux-gnu libc6-dev-${{ matrix.arch.name }}-cross
-      - run: rm -rf .git/
+      - name: Install cross
+        run: cargo install cross
       - name: Build
         run: |
-          cargo build --release --target=${{ matrix.arch.target }}
+          cross build --release --target=${{ matrix.arch.target }}
       - name: Rename artifact
         run: mv target/${{ matrix.arch.target }}/release/tuigreet target/${{ matrix.arch.target }}/release/tuigreet-${{ steps.version.outputs.VERSION }}-${{ matrix.arch.name }}
       - name: Upload artifact
@@ -85,7 +90,12 @@ jobs:
     steps:
       - name: Get the version
         id: version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "VERSION=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -96,5 +106,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ steps.version.outputs.VERSION }}
           prerelease: false
-          tag: ${{ github.ref }}
+          tag: refs/tags/${{ steps.version.outputs.VERSION }}
           artifacts: target/out/*/*
