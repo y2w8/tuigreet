@@ -107,16 +107,12 @@ Cache directory must be created for `--remember*` features to work. The director
 
 ### From Arch Linux
 
-On ArchLinux, `tuigreet` is available from the [extra](https://archlinux.org/packages/extra/x86_64/greetd-tuigreet/) repo and is installable through pacman:
-
-```
-$ pacman -S greetd-tuigreet
-```
-
-Two more distributions are available from the [AUR](https://aur.archlinux.org/packages?O=0&K=tuigreet): `greetd-tuigreet-bin` is the precompiled release for the latest tagged release of `tuigreet` and `greetd-tuigreet-git` is a rolling release always following the `master` branch of this repository.
+On ArchLinux, two distributions are available from the [AUR](https://aur.archlinux.org/packages?O=0&K=tuigreet-soupy-boy): `greetd-tuigreet-soupy-boy-bin` is the precompiled release for the latest tagged release of `tuigreet` and `greetd-tuigreet-soupy-boy-git` is a rolling release always following the `master` branch of this repository.
 Those can be installed via your preferred AUR helper.
 
 ### From Gentoo
+
+WIP ON FORK - This is for upstream - will update this part of the readme once I've uploaded to gentoo packages
 
 On Gentoo, `tuigreet` is available as a package `gui-apps/tuigreet`:
 
@@ -125,6 +121,8 @@ $ emerge --ask --verbose gui-apps/tuigreet
 ```
 
 ### From NixOS
+
+WIP ON FORK - This is for upstream - will update this part of the readme once I've uploaded to nixos packages
 
 On NixOS `greetd` and `tuigreet` both available via `<nixpkgs>` main repository.
 Please refer to the snippet below for the minimal `tuigreet` configuration:
@@ -148,7 +146,7 @@ Please refer to the snippet below for the minimal `tuigreet` configuration:
 
 ### Pre-built binaries
 
-Pre-built binaries of `tuigreet` for several architectures can be found in the [releases](https://github.com/soupy-boy/tuigreet/releases) section of this repository. The [tip prerelease](https://github.com/soupy-boy/tuigreet/releases/tag/tip) is continuously built and kept in sync with the `master` branch.
+Pre-built binaries of `tuigreet` for several architectures can be found in the [releases](https://github.com/soupy-boy/tuigreet/releases) section of this repository.
 
 ## Running the tests
 
