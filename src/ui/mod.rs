@@ -1,3 +1,4 @@
+mod ascii;
 mod command;
 pub mod common;
 mod i18n;
@@ -33,6 +34,7 @@ pub use self::i18n::MESSAGES;
 
 const TITLEBAR_INDEX: usize = 1;
 const STATUSBAR_INDEX: usize = 3;
+
 const STATUSBAR_LEFT_INDEX: usize = 1;
 const STATUSBAR_RIGHT_INDEX: usize = 2;
 
@@ -130,16 +132,17 @@ where
       f.render_widget(status_right, status_chunks[STATUSBAR_RIGHT_INDEX]);
     }
 
-    let cursor = match greeter.mode {
-      Mode::Command => self::command::draw(&mut greeter, f).ok(),
-      Mode::Sessions => greeter.sessions.draw(&greeter, f).ok(),
-      Mode::Users => greeter.users.draw(&greeter, f).ok(),
-      Mode::Processing => self::processing::draw(&mut greeter, f).ok(),
-      _ => self::prompt::draw(&mut greeter, f).ok(),
+    let draw_result = match greeter.mode {
+      Mode::Command => self::command::draw(&mut greeter, f),
+      Mode::Sessions => greeter.sessions.draw(&greeter, f),
+      Mode::Users => greeter.users.draw(&greeter, f),
+      Mode::Processing => self::processing::draw(&mut greeter, f),
+      _ => self::prompt::draw(&mut greeter, f),
     };
+    if let Ok((cursor, container)) = draw_result {
+      self::ascii::draw(f, container).ok();
 
-    if !hide_cursor {
-      if let Some(cursor) = cursor {
+      if !hide_cursor {
         f.set_cursor(cursor.0 - 1, cursor.1 - 1);
       }
     }

@@ -19,7 +19,7 @@ const GREETING_INDEX: usize = 0;
 const USERNAME_INDEX: usize = 1;
 const ANSWER_INDEX: usize = 3;
 
-pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn Error>> {
+pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<((u16, u16), Rect), Box<dyn Error>> {
   let theme = &greeter.theme;
 
   let size = f.size();
@@ -150,7 +150,7 @@ pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn 
       let username_length = greeter.username.get().chars().count();
       let offset = get_cursor_offset(greeter, username_length);
 
-      Ok((2 + cursor.x + fl!("username").chars().count() as u16 + offset as u16, USERNAME_INDEX as u16 + cursor.y))
+      Ok(((2 + cursor.x + fl!("username").chars().count() as u16 + offset as u16, USERNAME_INDEX as u16 + cursor.y), container))
     }
 
     Mode::Password => {
@@ -158,12 +158,12 @@ pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn 
       let offset = get_cursor_offset(greeter, answer_length);
 
       if greeter.asking_for_secret && !greeter.secret_display.show() {
-        Ok((1 + cursor.x + greeter.prompt_width() as u16, ANSWER_INDEX as u16 + prompt_padding + cursor.y - 1))
+        Ok(((1 + cursor.x + greeter.prompt_width() as u16, ANSWER_INDEX as u16 + prompt_padding + cursor.y - 1), container))
       } else {
-        Ok((1 + cursor.x + greeter.prompt_width() as u16 + offset as u16, ANSWER_INDEX as u16 + prompt_padding + cursor.y - 1))
+        Ok(((1 + cursor.x + greeter.prompt_width() as u16 + offset as u16, ANSWER_INDEX as u16 + prompt_padding + cursor.y - 1), container))
       }
     }
 
-    _ => Ok((1, 1)),
+    _ => Ok(((1, 1), container)),
   }
 }

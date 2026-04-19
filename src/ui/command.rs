@@ -14,7 +14,7 @@ use crate::{
 
 use super::common::style::Themed;
 
-pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn Error>> {
+pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<((u16, u16), Rect), Box<dyn Error>> {
   let theme = &greeter.theme;
 
   let size = f.size();
@@ -61,5 +61,5 @@ pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn 
   let new_command = greeter.buffer.clone();
   let offset = get_cursor_offset(greeter, new_command.chars().count());
 
-  Ok((2 + cursor.x + fl!("new_command").chars().count() as u16 + offset as u16, cursor.y + 1))
+  Ok(((2 + cursor.x + fl!("new_command").chars().count() as u16 + offset as u16, cursor.y + 1), container))
 }

@@ -35,7 +35,7 @@ impl<T> Menu<T>
 where
   T: MenuItem,
 {
-  pub fn draw(&self, greeter: &Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn Error>> {
+  pub fn draw(&self, greeter: &Greeter, f: &mut Frame) -> Result<((u16, u16), Rect), Box<dyn Error>> {
     let theme = &greeter.theme;
 
     let size = f.size();
@@ -65,7 +65,7 @@ where
 
     f.render_widget(block, container);
 
-    Ok((1, 1))
+    Ok(((1, 1), container))
   }
 
   fn get_option<'g, S>(&self, name: S, index: usize) -> Span<'g>

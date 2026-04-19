@@ -11,7 +11,7 @@ use crate::{
   Greeter,
 };
 
-pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn Error>> {
+pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<((u16, u16), Rect), Box<dyn Error>> {
   let size = f.size();
 
   let width = greeter.width();
@@ -34,5 +34,5 @@ pub fn draw(greeter: &mut Greeter, f: &mut Frame) -> Result<(u16, u16), Box<dyn 
   f.render_widget(paragraph, chunks[0]);
   f.render_widget(block, container);
 
-  Ok((1, 1))
+  Ok(((1, 1), container))
 }
